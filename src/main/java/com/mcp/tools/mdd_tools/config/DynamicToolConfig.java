@@ -23,7 +23,6 @@ public class DynamicToolConfig {
     public ToolCallbackProvider dynamicToolProvider() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
 
-        // Load metadata JSON
         InputStream inputStream = getClass().getResourceAsStream("/tools.json");
         List<ApiToolMetadata> toolMetadataList = mapper.readValue(
                 inputStream,
@@ -38,7 +37,6 @@ public class DynamicToolConfig {
                 @Override
                 public String call(String input) {
                     try {
-                        // Perform actual API call — here it's a simple GET
                         return webClient
                                 .get()
                                 .uri(meta.getUrl())
@@ -71,7 +69,6 @@ public class DynamicToolConfig {
             toolCallbacks.add(callback);
         }
 
-        // ✅ Convert List to Array before returning
         return () -> toolCallbacks.toArray(new ToolCallback[0]);
     }
 }
