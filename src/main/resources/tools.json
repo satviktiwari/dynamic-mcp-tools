@@ -13,5 +13,10 @@
     "name": "call_api_3",
     "description": "Makes a call to API 3",
     "url": "https://localhost:8000/api3"
+  },
+  {
+    "name": "call_google",
+    "description": "Makes a call to google",
+    "url": "https://google.com"
   }
 ]
