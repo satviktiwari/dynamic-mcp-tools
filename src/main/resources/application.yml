@@ -2,7 +2,7 @@ spring:
   ai:
     mcp:
       server:
-        name: maths-mcp-server
+        name: api-mcp-server
         version: 0.0.1
   application:
-    name: maths-mcp-server
+    name: api-mcp-server
