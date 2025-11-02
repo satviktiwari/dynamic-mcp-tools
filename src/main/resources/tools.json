@@ -1,0 +1,17 @@
+[
+  {
+    "name": "call_api_1",
+    "description": "Makes a call to API 1",
+    "url": "https://localhost:8000/api1"
+  },
+  {
+    "name": "call_api_2",
+    "description": "Makes a call to API 2",
+    "url": "https://localhost:8000/api2"
+  },
+  {
+    "name": "call_api_3",
+    "description": "Makes a call to API 3",
+    "url": "https://localhost:8000/api3"
+  }
+]
