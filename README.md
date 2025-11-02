@@ -58,3 +58,12 @@ If your tools.json contains three entries (call_api_1, call_api_2, and call_api_
 - Add validation for tool schema and duplicate names.
 
 - Extend support to trigger API calls directly via the registered tool metadata.
+
+### Validation from a sample MCP agent:
+
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/3d95a611-2c61-4dac-8444-bfb1f87a391f" />
+
+### Postman screenshot
+
+<img width="1920" height="1080" alt="Screenshot from 2025-11-02 13-45-17" src="https://github.com/user-attachments/assets/136674e7-db46-473a-bfa4-54d4e89d7208" />
+
