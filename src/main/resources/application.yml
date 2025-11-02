@@ -6,3 +6,16 @@ spring:
         version: 0.0.1
   application:
     name: api-mcp-server
+  datasource:
+    url: replace_me
+    username: postgres
+    password: replace_me
+    driver-class-name: org.postgresql.Driver
+
+    jpa:
+      hibernate:
+        ddl-auto: none
+      show-sql: true
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.PostgreSQLDialect
