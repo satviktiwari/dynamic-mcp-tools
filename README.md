@@ -3,7 +3,7 @@
 
 # 🧩 MDD Tools – Dynamic API Tool Loader (Database-Driven)
 
-This Spring Boot application dynamically provisions and manages **API tools** from a **database (Supabase / PostgreSQL)** instead of a JSON file.
+This Spring Boot application dynamically provisions and manages **API tools** from a **database (Supabase / PostgreSQL)**.
 Each tool represents a callable API operation (e.g., `call_api_1`, `call_google`, etc.) and is automatically registered and exposed via REST endpoints.
 
 This enables flexible, metadata-driven management of APIs — ideal for **AI agents**, **MCP servers**, or **automation frameworks** where tools (API integrations) frequently change.
@@ -208,14 +208,14 @@ curl -X POST http://localhost:8080/api/tools/refresh
 
 ## 🧾 Summary
 
-| Feature              | Old (JSON-based) | New (DB-based)                    |
-| -------------------- | ---------------- | --------------------------------- |
-| Storage              | `tools.json`     | Supabase/PostgreSQL               |
-| Reload               | On app restart   | Automatic or via `/refresh`       |
-| Add Tool             | Manual JSON edit | REST API (`POST /api/tools`)      |
-| Persistence          | File-based       | Database                          |
-| Scalability          | Limited          | High – supports concurrent writes |
-| AI/MCP Compatibility | Partial          | Full (real-time dynamic registry) |
+| Feature              |     How it's done               |
+| -------------------- | --------------------------------- |
+| Storage              |  Supabase/PostgreSQL               |
+| Reload               | Automatic or via `/refresh`       |
+| Add Tool             | REST API (`POST /api/tools`)      |
+| Persistence          |Database                          |
+| Scalability          | High – supports concurrent writes |
+| AI/MCP Compatibility | Full (real-time dynamic registry) |
 
 ---
 
