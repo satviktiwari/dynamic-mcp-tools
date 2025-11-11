@@ -8,20 +8,24 @@ import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.tool.definition.ToolDefinition;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-@Configuration
+import org.springframework.stereotype.Component;
+import java.util.Arrays;
+import java.util.Optional;
+
+@Component
 public class DynamicToolConfig {
 
     private final ApiToolRepository repository;
     private final JdbcTemplate jdbcTemplate;
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    // ✅ Cache of callbacks to avoid reloading for every request
+    private ToolCallback[] cachedCallbacks;
 
     public DynamicToolConfig(ApiToolRepository repository, JdbcTemplate jdbcTemplate) {
         this.repository = repository;
@@ -47,23 +51,19 @@ public class DynamicToolConfig {
                             String whereField = node.has("whereField") ? node.get("whereField").asText() : null;
                             String whereValue = node.has("whereValue") ? node.get("whereValue").asText() : null;
 
-                            // Build dynamic query
+                            // Build dynamic SQL query
                             StringBuilder query = new StringBuilder("SELECT " + meta.getFields() + " FROM " + meta.getTableName());
-
                             if (whereField != null && whereValue != null) {
                                 query.append(" WHERE ").append(whereField).append(" = ?");
                             }
-
                             query.append(" LIMIT ").append(limit);
 
-                            // 🌟 Type-safe parameter binding
                             Object typedValue = resolveTypedValue(meta.getTableName(), whereField, whereValue);
 
                             List<?> results = (whereField != null && whereValue != null)
                                     ? jdbcTemplate.queryForList(query.toString(), typedValue)
                                     : jdbcTemplate.queryForList(query.toString());
 
-                            // ✅ Return JSON
                             return objectMapper.writeValueAsString(results);
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -89,13 +89,8 @@ public class DynamicToolConfig {
                                 .build();
                     }
 
-                    /**
-                     * Attempts to convert whereValue to the correct type based on DB metadata.
-                     */
                     private Object resolveTypedValue(String tableName, String columnName, String whereValue) {
-                        if (tableName == null || columnName == null || whereValue == null) {
-                            return null;
-                        }
+                        if (tableName == null || columnName == null || whereValue == null) return null;
 
                         try {
                             String query = "SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ? AND COLUMN_NAME = ?";
@@ -115,18 +110,33 @@ public class DynamicToolConfig {
                                 default:
                                     return whereValue; // Assume string
                             }
-
                         } catch (Exception e) {
-                            // Fallback: return string
                             return whereValue;
                         }
                     }
                 };
-
                 toolCallbacks.add(callback);
             }
 
-            return toolCallbacks.toArray(new ToolCallback[0]);
+            cachedCallbacks = toolCallbacks.toArray(new ToolCallback[0]);
+            return cachedCallbacks;
         };
+    }
+
+    // ✅ Method 1: getToolCallbacks()
+    public ToolCallback[] getToolCallbacks() {
+        if (cachedCallbacks == null) {
+            cachedCallbacks = dynamicToolProvider().getToolCallbacks();
+        }
+        return cachedCallbacks;
+    }
+
+    // ✅ Method 2: getToolDefinition()
+    public Optional<ToolDefinition> getToolDefinition(String toolName) {
+        ToolCallback[] callbacks = getToolCallbacks();
+        return Arrays.stream(callbacks)
+                .map(ToolCallback::getToolDefinition)
+                .filter(def -> def.name().equalsIgnoreCase(toolName))
+                .findFirst();
     }
 }
